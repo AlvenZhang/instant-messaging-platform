@@ -14,6 +14,11 @@
         <module>platform-group</module>
         <module>platform-message</module>
         <module>platform-user</module>
+        <module>platform-user/platform-user-application</module>
+        <module>platform-user/platform-user-domain</module>
+        <module>platform-user/platform-user-infrastructure</module>
+        <module>platform-user/platform-user-interfaces</module>
+        <module>platform-user/platform-user-starter</module>
     </modules>
 
     <properties>
