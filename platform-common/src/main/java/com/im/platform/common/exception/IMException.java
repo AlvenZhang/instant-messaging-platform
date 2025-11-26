@@ -1,4 +1,4 @@
-package com.im.platform.common.model.exception;
+package com.im.platform.common.exception;
 
 /**
  * IM平台自定义异常类

@@ -1,4 +1,4 @@
-package com.im.platform.common.model.session;
+package com.im.platform.common.session;
 
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

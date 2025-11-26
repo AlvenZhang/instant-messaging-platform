@@ -1,4 +1,4 @@
-package com.im.platform.common.model.response;
+package com.im.platform.common.response;
 
 /**
  * 统一响应数据实体类

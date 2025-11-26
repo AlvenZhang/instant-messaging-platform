@@ -1,6 +1,6 @@
-package com.im.platform.common.model.exception;
+package com.im.platform.common.exception;
 
-import com.im.platform.common.model.response.ResponseMessageFactory;
+import com.im.platform.common.response.ResponseMessageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;

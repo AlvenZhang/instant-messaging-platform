@@ -1,4 +1,4 @@
-package com.im.platform.common.model.session;
+package com.im.platform.common.session;
 
 /**
  * 用户Session实体类
