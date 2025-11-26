@@ -1,10 +1,12 @@
 package com.im.platform.common.session;
 
+import com.im.common.domain.model.SessionInfo;
+
 /**
  * 用户Session实体类
  * 用于存储当前请求用户的基本信息
  */
-public class UserSession {
+public class UserSession extends SessionInfo {
     private String userName;
     private String nickName;
 
