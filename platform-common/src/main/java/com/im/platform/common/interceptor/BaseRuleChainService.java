@@ -1,7 +1,10 @@
 package com.im.platform.common.interceptor;
 
+import com.alibaba.fastjson.JSON;
+import com.im.common.domain.jwt.JwtUtils;
 import com.im.platform.common.session.SessionContext;
 import com.im.platform.common.session.UserSession;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class BaseRuleChainService implements RuleChainService {
 
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
     /**
      * 获取当前请求的IP地址
      * @param request HTTP请求对象
@@ -68,31 +74,15 @@ public abstract class BaseRuleChainService implements RuleChainService {
     protected UserSession getUserSession(HttpServletRequest request) {
         try {
             // 首先尝试从SessionContext中获取
-            UserSession session = SessionContext.getSession();
-            if (session != null) {
-                return session;
+            String accessToken = request.getHeader("accessToken");
+            if (!JwtUtils.checkSign(accessToken, jwtSecret)){
+                return null;
             }
-
-            // 从请求属性中获取
-            Object sessionObj = request.getAttribute("userSession");
-            if (sessionObj instanceof UserSession) {
-                return (UserSession) sessionObj;
+            String info = JwtUtils.getInfo(accessToken);
+            if (StringUtils.hasText(info)){
+                return null;
             }
-
-            // TODO: 实现token验证逻辑
-            // 从请求头中获取token
-            String token = getTokenFromRequest(request);
-            if (StringUtils.hasText(token)) {
-                // TODO: 验证token并从token中获取用户信息
-                // 这里需要根据具体的token验证逻辑实现
-                // UserSession userSession = tokenService.validateToken(token);
-                // if (userSession != null) {
-                //     SessionContext.setSession(userSession);
-                //     return userSession;
-                // }
-            }
-
-            return null;
+            return JSON.parseObject(info, UserSession.class);
 
         } catch (Exception e) {
             // 记录异常日志
@@ -101,65 +91,5 @@ public abstract class BaseRuleChainService implements RuleChainService {
         }
     }
 
-    /**
-     * 从请求中获取token
-     * @param request HTTP请求对象
-     * @return token字符串，如果不存在则返回null
-     */
-    private String getTokenFromRequest(HttpServletRequest request) {
-        try {
-            // 从Authorization头中获取token
-            String authHeader = request.getHeader("Authorization");
-            if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-                return authHeader.substring(7);
-            }
-
-            // 从参数中获取token
-            String tokenParam = request.getParameter("token");
-            if (StringUtils.hasText(tokenParam)) {
-                return tokenParam;
-            }
-
-            // 从请求属性中获取token
-            Object tokenAttr = request.getAttribute("token");
-            if (tokenAttr != null) {
-                return tokenAttr.toString();
-            }
-
-            return null;
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * 判断当前用户是否已登录
-     * @param request HTTP请求对象
-     * @return true表示已登录，false表示未登录
-     */
-    protected boolean isUserLoggedIn(HttpServletRequest request) {
-        return getUserSession(request) != null;
-    }
-
-    /**
-     * 获取当前用户名
-     * @param request HTTP请求对象
-     * @return 用户名，如果未登录则返回null
-     */
-    protected String getCurrentUserName(HttpServletRequest request) {
-        UserSession session = getUserSession(request);
-        return session != null ? session.getUserName() : null;
-    }
-
-    /**
-     * 获取当前用户昵称
-     * @param request HTTP请求对象
-     * @return 用户昵称，如果未登录则返回null
-     */
-    protected String getCurrentNickName(HttpServletRequest request) {
-        UserSession session = getUserSession(request);
-        return session != null ? session.getNickName() : null;
-    }
 }
 
